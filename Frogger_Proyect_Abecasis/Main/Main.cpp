@@ -93,6 +93,22 @@ void main()
 	}
 }
 
+/*
+
+The objectives I didnt finish will have a (-) before 
+	the text, in the other case will have (+)
+
+Objectives to complete the game:
+	- Frog dies if collides with the wall from 68 to 196 on the 'y' axis	
+	- Frog wins is reaches the goal 6 times (1 for each hole)
+	- Frog loses if his 3 LIFES are lost	
+	- Make 4 obstacules (1 car, 1 bus, 1 faster car and 1 trunk)			
+	- Obstacules are teleported to the other part of the scene when they reach the limit of the map
+	- Make the GUI for the game (Lifes left and *if I want* the score)	
+	- In case I use scores, save it in scores.dat	
+	- Make a Title Screen	
+
+*/
 
 
 
