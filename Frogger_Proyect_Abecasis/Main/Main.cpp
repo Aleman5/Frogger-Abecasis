@@ -15,6 +15,10 @@ Font used: Arcade Classic. Download link -> https://www.dafont.com/arcade-classi
 #include"TitleScreen.h"
 #include"HighScores.h"
 
+#define SCREEN_TITLE 0
+#define SCREEN_IN_GAME 1
+#define SCREEN_HIGHSCORES 2
+
 using namespace std;
 
 bool loadTexture(sf::Texture& tex, const string file)
@@ -93,7 +97,6 @@ void main()
 	int frogMovDistance = 32;
 	int frogLifes = 3;
 	int frogScore = 0;
-
 			// Frog copies
 	int mountOfGoals = 6;
 	int scorePerGoal = 100;
@@ -122,7 +125,7 @@ void main()
 		{
 			switch (actualScreen)
 			{
-			case 0: // Title Screen
+			case SCREEN_TITLE:
 				switch (event.type)
 				{
 				case sf::Event::KeyPressed:
@@ -138,7 +141,7 @@ void main()
 						switch (titleScreen.getActual())
 						{
 						case 0: // Start Game
-							actualScreen = 1;
+							actualScreen = SCREEN_IN_GAME;
 
 							// Reseting values to default
 							frogX = frogOriginalPosX;
@@ -150,7 +153,7 @@ void main()
 								vGoalFrogs[i].second = false;
 							break;
 						case 1: // Open Highscore Screen
-							actualScreen = 2;
+							actualScreen = SCREEN_HIGHSCORES;
 							break;
 						case 2: // Exit Game
 							window.close();
@@ -164,7 +167,7 @@ void main()
 					break;
 				}
 				break;
-			case 1: // In Game
+			case SCREEN_IN_GAME: // In Game
 				switch (event.type)
 				{
 				case sf::Event::KeyPressed:
@@ -193,7 +196,7 @@ void main()
 								}
 								else
 								{
-									actualScreen = 0;
+									actualScreen = SCREEN_HIGHSCORES;
 									highscores.saveScore(frogScore);
 								}
 								frogLifes--;
@@ -216,7 +219,7 @@ void main()
 								}
 								else
 								{
-									actualScreen = 0;
+									actualScreen = SCREEN_HIGHSCORES;
 									highscores.saveScore(frogScore);
 								}
 								frogLifes--;
@@ -224,7 +227,7 @@ void main()
 						}
 						break;
 					case sf::Keyboard::Space:
-						actualScreen = 0;
+						actualScreen = SCREEN_HIGHSCORES;
 						break;
 					}
 					break;
@@ -240,7 +243,7 @@ void main()
 					switch (event.key.code)
 					{
 					case sf::Keyboard::Space:
-						actualScreen = 0;
+						actualScreen = SCREEN_TITLE;
 					}
 				}
 				break;
@@ -250,12 +253,12 @@ void main()
 		
 		switch (actualScreen)
 		{
-		case 0:
+		case SCREEN_TITLE:
 			window.clear();
 			titleScreen.draw(window);
 			window.display();
 			break;
-		case 1:
+		case SCREEN_IN_GAME:
 			// Checking goal
 			if (frogY < frogMovDistance * 2)
 			{
@@ -283,7 +286,7 @@ void main()
 					}
 					else
 					{
-						actualScreen = 0;
+						actualScreen = SCREEN_HIGHSCORES;
 						highscores.saveScore(frogScore);
 					}
 					frogLifes--;
@@ -306,7 +309,7 @@ void main()
 			window.draw(frog);
 			window.display();
 			break;
-		case 2:
+		case SCREEN_HIGHSCORES:
 			window.clear();
 			highscores.draw(window);
 			window.display();
