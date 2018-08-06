@@ -13,7 +13,19 @@ void TitleScreen::init()
 {
 	actualElement = 0;
 
+	textIcon.loadFromFile("Frog.png");
+
+	icon.setTexture(textIcon);
+	icon.setPosition(_windowWidht / 2 - 78, 32);
+	icon.scale(6, 6);
+
 	font.loadFromFile("ARCADECLASSIC.TTF");
+
+	title.setFont(font);
+	title.setCharacterSize(60);
+	title.setFillColor(sf::Color::Red);
+	title.setString("FROGGER");
+	title.setPosition(86, 160);
 
 	displayTexts[0].setFont(font);
 	displayTexts[0].setCharacterSize(40);
@@ -30,12 +42,15 @@ void TitleScreen::init()
 	displayTexts[1].setString("Highscores");
 	displayTexts[2].setString("Exit Game");
 
-	displayTexts[0].setPosition(_windowWidht / 2 - 100, _windowHeight / 2 - 40);
-	displayTexts[1].setPosition(_windowWidht / 2 - 95, _windowHeight / 2 + 10);
-	displayTexts[2].setPosition(_windowWidht / 2 - 80, _windowHeight / 2 + 50);
+	displayTexts[0].setPosition(_windowWidht / 2 - 97, _windowHeight / 2);
+	displayTexts[1].setPosition(_windowWidht / 2 - 92, _windowHeight / 2 + 50);
+	displayTexts[2].setPosition(_windowWidht / 2 - 77, _windowHeight / 2 + 90);
 }
 void TitleScreen::draw(sf::RenderWindow& window)
 {
+	window.draw(icon);
+	window.draw(title);
+
 	for (int i = 0; i < MOUNT_OF_TEXTS; i++)
 		window.draw(displayTexts[i]);
 }
@@ -44,7 +59,7 @@ void TitleScreen::goUp()
 	displayTexts[actualElement].setFillColor(sf::Color::White);
 	actualElement--;
 	if (actualElement == -1)
-		actualElement = 2;
+		actualElement = MOUNT_OF_TEXTS - 1;
 	displayTexts[actualElement].setFillColor(sf::Color::Green);
 }
 void TitleScreen::goDown()

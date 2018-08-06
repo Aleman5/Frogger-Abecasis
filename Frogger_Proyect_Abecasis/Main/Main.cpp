@@ -13,6 +13,7 @@ Font used: Arcade Classic. Download link -> https://www.dafont.com/arcade-classi
 #include"SFML/Audio.hpp"
 #include"SFML/Graphics.hpp"
 #include"TitleScreen.h"
+#include"HighScores.h"
 
 using namespace std;
 
@@ -50,6 +51,7 @@ void main()
 	sf::RenderWindow window(sf::VideoMode(windowWidht, windowHeight), "Frogger Alejandro Abecasis");
 	
 	TitleScreen titleScreen(windowWidht, windowHeight);
+	Highscores highscores(windowWidht, windowHeight);
 
 	// Font
 	sf::Font font;
@@ -77,10 +79,10 @@ void main()
 			// Frog
 	sf::Sprite frog;
 	frog.setTexture(tFrog);
-	frog.setTextureRect(sf::IntRect(0,0,24,24));
 			// Frog copies in case of reaching the goal
 	vector<pair<sf::Sprite, bool>> vGoalFrogs;
-
+			// Frog copies for the lifes
+	vector<sf::Sprite> vLifeFrogs;
 
 	// Variables
 			// Frog
@@ -94,6 +96,7 @@ void main()
 
 			// Frog copies
 	int mountOfGoals = 6;
+	int scorePerGoal = 100;
 
 	// Text position
 	scoreTxt.setPosition(4, windowHeight - frogMovDistance + 4);
@@ -105,7 +108,13 @@ void main()
 		vGoalFrogs.push_back(make_pair(sf::Sprite(tFrog), false));
 		vGoalFrogs[i].first.setPosition((i) * frogMovDistance * 2 + frogMovDistance + 4, 36);
 	}
-	
+
+	for (int i = 0; i < frogLifes; i++)
+	{
+		vLifeFrogs.push_back(sf::Sprite(tFrog));
+		vLifeFrogs[i].setPosition(i * frogMovDistance + 4, windowHeight - 60);
+	}
+
 	while (window.isOpen())
 	{
 		sf::Event event;
@@ -117,20 +126,28 @@ void main()
 				switch (event.type)
 				{
 				case sf::Event::KeyPressed:
-					if (event.key.code == sf::Keyboard::W)
+					switch (event.key.code)
 					{
+					case sf::Keyboard::W:
 						titleScreen.goUp();
-					}
-					if(event.key.code == sf::Keyboard::S)
-					{
+						break;
+					case sf::Keyboard::S:
 						titleScreen.goDown();
-					}
-					if (event.key.code == sf::Keyboard::Space)
-					{
+						break;
+					case sf::Keyboard::Space:
 						switch (titleScreen.getActual())
 						{
 						case 0: // Start Game
 							actualScreen = 1;
+
+							// Reseting values to default
+							frogX = frogOriginalPosX;
+							frogY = frogOriginalPosY;
+							frogLifes = 3;
+							frogScore = 0;
+							changeScore(frogScore, 0, scoreTxt);
+							for (int i = 0; i < mountOfGoals; i++)
+								vGoalFrogs[i].second = false;
 							break;
 						case 1: // Open Highscore Screen
 							actualScreen = 2;
@@ -139,6 +156,7 @@ void main()
 							window.close();
 							break;
 						}
+						break;
 					}
 					break;
 				case sf::Event::Closed:
@@ -150,18 +168,16 @@ void main()
 				switch (event.type)
 				{
 				case sf::Event::KeyPressed:
-					if (event.key.code == sf::Keyboard::W)
+					switch (event.key.code)
 					{
-						if (frogY - frogMovDistance > 0)
-							frogY -= frogMovDistance;
-					}
-					else if (event.key.code == sf::Keyboard::S)
-					{
+					case sf::Keyboard::W:
+						frogY -= frogMovDistance;
+						break;
+					case sf::Keyboard::S:
 						if (frogY + frogMovDistance < windowHeight - 66)
 							frogY += frogMovDistance;
-					}
-					else if (event.key.code == sf::Keyboard::A)
-					{
+						break;
+					case sf::Keyboard::A:
 						if (frogX - frogMovDistance > 0)
 						{
 							frogX -= frogMovDistance;
@@ -170,14 +186,21 @@ void main()
 						{
 							if (frogY > 67 && frogY < 197) // Collision with the water wall
 							{
-								frogX = frogOriginalPosX;
-								frogY = frogOriginalPosY;
+								if (frogLifes > 0)
+								{
+									frogX = frogOriginalPosX;
+									frogY = frogOriginalPosY;
+								}
+								else
+								{
+									actualScreen = 0;
+									highscores.saveScore(frogScore);
+								}
 								frogLifes--;
 							}
 						}
-					}
-					else if (event.key.code == sf::Keyboard::D)
-					{
+						break;
+					case sf::Keyboard::D:
 						if (frogX + frogMovDistance < windowWidht)
 						{
 							frogX += frogMovDistance;
@@ -186,11 +209,23 @@ void main()
 						{
 							if (frogY > 67 && frogY < 197) // Collision with the water wall
 							{
-								frogX = frogOriginalPosX;
-								frogY = frogOriginalPosY;
+								if (frogLifes > 0)
+								{
+									frogX = frogOriginalPosX;
+									frogY = frogOriginalPosY;
+								}
+								else
+								{
+									actualScreen = 0;
+									highscores.saveScore(frogScore);
+								}
 								frogLifes--;
 							}
 						}
+						break;
+					case sf::Keyboard::Space:
+						actualScreen = 0;
+						break;
 					}
 					break;
 
@@ -200,7 +235,14 @@ void main()
 				}
 				break;
 			case 2: // Highscores
-
+				if (event.type == sf::Event::KeyPressed)
+				{
+					switch (event.key.code)
+					{
+					case sf::Keyboard::Space:
+						actualScreen = 0;
+					}
+				}
 				break;
 			}
 			
@@ -223,34 +265,51 @@ void main()
 				{
 					vGoalFrogs[(int)(pos / 2)].second = true;
 
-					changeScore(frogScore, 100, scoreTxt);
+					changeScore(frogScore, scorePerGoal, scoreTxt);
+
+					if (frogScore % (scorePerGoal * 6) == 0)
+						for (int i = 0; i < mountOfGoals; i++)
+							vGoalFrogs[i].second = false;
+
+					frogX = frogOriginalPosX;
+					frogY = frogOriginalPosY;
 				}
 				else // In this case, the frog didnt reach de goal correctly
 				{
+					if (frogLifes > 0)
+					{
+						frogX = frogOriginalPosX;
+						frogY = frogOriginalPosY;
+					}
+					else
+					{
+						actualScreen = 0;
+						highscores.saveScore(frogScore);
+					}
 					frogLifes--;
 				}
-
-				frogX = frogOriginalPosX;
-				frogY = frogOriginalPosY;
 			}
 
 			// Makes the Frog's translation
-			frog.setPosition(frogX, frogY);
+			if(frogLifes >= 0)
+				frog.setPosition(frogX, frogY);
 
 			// Drawing
 			window.clear();
 			window.draw(background);
 			window.draw(scoreTxt);
 			for (int i = 0; i < mountOfGoals; i++)
-			{
 				if (vGoalFrogs[i].second)
 					window.draw(vGoalFrogs[i].first);
-			}
+			for (int i = 0; i < frogLifes; i++)
+				window.draw(vLifeFrogs[i]);
 			window.draw(frog);
 			window.display();
 			break;
 		case 2:
-
+			window.clear();
+			highscores.draw(window);
+			window.display();
 			break;
 		}
 		
@@ -264,12 +323,12 @@ The objectives I didnt finish will have a (-) before
 
 Objectives to complete the game:
 	+ Frog dies if collides with the wall from 68 to 196 on the 'y' axis
-	- Frog wins if reaches all the goals (6)
-	- Frog loses if his 3 LIFES are lost
-	- Make 4 obstacules (1 car, 1 bus, 1 faster car and 1 trunk)
+	+ Frog wins if reaches all the goals (6)
+	+ Frog loses if his LIFES are lost
+	- Make 3 obstacules (1 car, 1 bus and 1 trunk)
 	- Obstacules are teleported to the other part of the scene when they reach the limit of the map
-	- Make the GUI for the game (Lifes left and *if I want* the score)
-	- In case I use scores, save it in scores.dat
+	+ Make the GUI for the game (Lifes left and *if I want* the score)
+	+ In case I use scores, save it in scores.dat
 	+ Make a Title Screen
 	- Include sounds
 

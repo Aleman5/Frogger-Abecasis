@@ -11,7 +11,10 @@ private:
 	int _windowWidht;
 	int _windowHeight;
 	int actualElement;
+	sf::Texture textIcon;
+	sf::Sprite icon;
 	sf::Font font;
+	sf::Text title;
 	sf::Text displayTexts[MOUNT_OF_TEXTS]; // Play - Highscores - Exit
 public:
 	TitleScreen(const int windowWidht, const int windowHeight);
