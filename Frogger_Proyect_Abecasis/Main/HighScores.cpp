@@ -10,7 +10,7 @@ void Highscores::updateScoresFile()
 		for (int i = 0; i < MOUNT_OF_SCORES; i++)
 		{
 			int actualScore = lisScores.front();
-			archivoScores << actualScore << endl;		 // Updating scores.dat
+			archivoScores << actualScore << endl << endl;// Updating scores.dat
 			scores[i].setString(to_string(actualScore)); // Updating texts
 			lisScores.pop_front();
 			lisScores.push_back(actualScore);
@@ -59,7 +59,7 @@ void Highscores::init()
 		scores[i].setPosition(140, i * 32 + 85);
 	}
 
-	char* scoreA = new char();
+	//char* scoreA = new char();
 	int scoreAux = 0;
 	try
 	{
@@ -68,8 +68,9 @@ void Highscores::init()
 
 		for (int i = 0; i < MOUNT_OF_SCORES; i++)
 		{
-			archivoScores.getline((char*)scoreA, sizeof(scoreAux));
-			scoreAux = *scoreA;
+			//archivoScores.getline((char*)scoreA, sizeof(scoreAux));
+			//scoreAux = *scoreA;
+			archivoScores >> scoreAux;
 			lisScores.push_back(scoreAux);
 		}
 		archivoScores.close();
@@ -78,6 +79,8 @@ void Highscores::init()
 	{
 		cerr << f.what();
 	}
+	//delete scoreA;
+
 	for (int i = 0; i < MOUNT_OF_SCORES; i++)
 	{
 		int actualScore = lisScores.front();
@@ -120,26 +123,9 @@ int Highscores::getActual()
 bool Highscores::saveScore(const int score)
 {
 	lisScores.push_front(score);
-
-	for (int i = 0; i < lisScores.size(); i++)
-	{
-		int d = lisScores.front();
-		cout << d << endl;
-		lisScores.pop_front();
-		lisScores.push_back(d);
-	}
-
 	lisScores.sort();
 	lisScores.reverse();
 	lisScores.pop_back();
-
-	for (int i = 0; i < lisScores.size(); i++)
-	{
-		int d = lisScores.front();
-		cout << d << endl;
-		lisScores.pop_front();
-		lisScores.push_back(d);
-	}
 
 	updateScoresFile();
 }

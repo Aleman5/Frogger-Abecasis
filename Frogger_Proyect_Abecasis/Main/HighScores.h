@@ -2,6 +2,7 @@
 #define HIGHSCORES
 
 #include<iostream>
+#include<sstream>
 #include<fstream>
 #include<list>
 #include"SFML/Graphics.hpp"
