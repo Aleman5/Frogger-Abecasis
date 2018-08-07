@@ -105,6 +105,10 @@ void main()
 
 
 	// Variables
+	int offset = 4;
+	int actualLine = 0;
+	int pos = 0;
+	bool hit = false;
 			// Frog
 	int frogOriginalPosX = 196;
 	int frogOriginalPosY = 388;
@@ -113,92 +117,91 @@ void main()
 	int frogMovDistance = 32;
 	int frogLifes = 3;
 	int frogScore = 0;
+	float frogSpeed = 0;
 			// Frog copies
 	int mountOfGoals = 6;
 	int scorePerGoal = 100;
 			// Obstacules
-	float velocityLine1 = 1.4f;
-	float velocityLine2 = 1.7f;
-	float velocityLine3 = 1.9f;
-	float velocityLine4 = 1.5f;
-	float velocityLine5 = 1.2f;
-	float velocityLine6 = 2.0f;
-	float velocityLine7 = 1.6f;
-	float velocityLine8 = 1.8f;
-	float velocityLine9 = 1.9f;
+	int positionToReturn = 128;
+	float velocityLine1 =  1.4f;
+	float velocityLine2 = -1.7f;
+	float velocityLine3 =  1.9f;
+	float velocityLine4 = -1.5f;
+	float velocityLine5 =  1.2f;
+	float velocityLine6 =  2.0f;
+	float velocityLine7 = -1.5f;
+	float velocityLine8 = -1.8f;
+	float velocityLine9 =  1.9f;
+	sf::Time time = sf::seconds(0.01f);
 
 
 	// Text position
-	scoreTxt.setPosition(4, windowHeight - frogMovDistance + 4);
+	scoreTxt.setPosition(offset, windowHeight - frogMovDistance + offset);
 	changeScore(frogScore, 0, scoreTxt);
 
 	// Initialization
 	for (int i = 0; i < mountOfGoals; i++)
 	{
 		vGoalFrogs.push_back(make_pair(sf::Sprite(tFrog), false));
-		vGoalFrogs[i].first.setPosition((i) * frogMovDistance * 2 + frogMovDistance + 4, 36);
+		vGoalFrogs[i].first.setPosition((i) * frogMovDistance * 2 + frogMovDistance + offset, 36);
 	}
 
 	for (int i = 0; i < frogLifes; i++)
 	{
 		vLifeFrogs.push_back(sf::Sprite(tFrog));
-		vLifeFrogs[i].setPosition(i * frogMovDistance + 4, windowHeight - 60);
+		vLifeFrogs[i].setPosition(i * frogMovDistance + offset, windowHeight - 60);
 	}
 
-	for (int i = 0; i < MOUNT_OBSTACULES_3; i++) // Line 1 Car
+	for (int i = 0; i < MOUNT_OBSTACULES_3; i++) 
 	{
+		// Line 1 Car
 		vLine1.push_back(sf::Sprite(tObstacules));
 		vLine1[i].setTextureRect(sf::IntRect(0, 0, 32, 24));
-		vLine1[i].setPosition(64 * i + 32, frogMovDistance * 11 + 4);
-	}
-	for (int i = 0; i < MOUNT_OBSTACULES_3; i++) // Line 2 Car
-	{
+		vLine1[i].setPosition(64 * i + 32, frogMovDistance * 11 + offset);
+
+		// Line 2 Car
 		vLine2.push_back(sf::Sprite(tObstacules));
 		vLine2[i].setTextureRect(sf::IntRect(0, 0, 32, 24));
-		vLine2[i].setPosition(64 * i + 32, frogMovDistance * 10 + 4);
-	}
-	for (int i = 0; i < MOUNT_OBSTACULES_2; i++) // Line 3 Bus
-	{
-		vLine3.push_back(sf::Sprite(tObstacules));
-		vLine3[i].setTextureRect(sf::IntRect(32, 0, 64, 24));
-		vLine3[i].setPosition(128 * i + 32, frogMovDistance * 9 + 4);
-	}
-	for (int i = 0; i < MOUNT_OBSTACULES_3; i++) // Line 4 Car
-	{
+		vLine2[i].setPosition(64 * i + 32, frogMovDistance * 10 + offset);
+
+		// Line 4 Car
 		vLine4.push_back(sf::Sprite(tObstacules));
 		vLine4[i].setTextureRect(sf::IntRect(0, 0, 32, 24));
-		vLine4[i].setPosition(64 * i + 32, frogMovDistance * 8 + 4);
-	}
-	for (int i = 0; i < MOUNT_OBSTACULES_3; i++) // Line 5 Small Lunks
-	{
+		vLine4[i].setPosition(64 * i + 32, frogMovDistance * 8 + offset);
+
+		// Line 5 Small Lunks
 		vLine5.push_back(sf::Sprite(tObstacules));
 		vLine5[i].setTextureRect(sf::IntRect(0, 48, 64, 24));
-		vLine5[i].setPosition(96 * i + 32, frogMovDistance * 6 + 4);
-	}
-	for (int i = 0; i < MOUNT_OBSTACULES_3; i++) // Line 6 Small Lunks
-	{
+		vLine5[i].setPosition(96 * i + 32, frogMovDistance * 6 + offset);
+
+		// Line 6 Small Lunks
 		vLine6.push_back(sf::Sprite(tObstacules));
 		vLine6[i].setTextureRect(sf::IntRect(0, 48, 64, 24));
-		vLine6[i].setPosition(96 * i + 32, frogMovDistance * 5 + 4);
-	}
-	for (int i = 0; i < MOUNT_OBSTACULES_2; i++) // Line 7 Large Lunks
-	{
-		vLine7.push_back(sf::Sprite(tObstacules));
-		vLine7[i].setTextureRect(sf::IntRect(0, 24, 96, 24));
-		vLine7[i].setPosition(192 * i + 32, frogMovDistance * 4 + 4);
-	}
-	for (int i = 0; i < MOUNT_OBSTACULES_3; i++) // Line 8 Small Lunks
-	{
+		vLine6[i].setPosition(96 * i + 32, frogMovDistance * 5 + offset);
+
+		// Line 8 Small Lunks
 		vLine8.push_back(sf::Sprite(tObstacules));
 		vLine8[i].setTextureRect(sf::IntRect(0, 48, 64, 24));
-		vLine8[i].setPosition(96 * i + 32, frogMovDistance * 3 + 4);
+		vLine8[i].setPosition(96 * i + 32, frogMovDistance * 3 + offset);
 	}
-	for (int i = 0; i < MOUNT_OBSTACULES_2; i++) // Line 9 Large Lunks
+	for (int i = 0; i < MOUNT_OBSTACULES_2; i++) 
 	{
+		// Line 3 Bus
+		vLine3.push_back(sf::Sprite(tObstacules));
+		vLine3[i].setTextureRect(sf::IntRect(32, 0, 64, 24));
+		vLine3[i].setPosition(128 * i + 32, frogMovDistance * 9 + offset);
+
+		// Line 7 Large Lunks
+		vLine7.push_back(sf::Sprite(tObstacules));
+		vLine7[i].setTextureRect(sf::IntRect(0, 24, 96, 24));
+		vLine7[i].setPosition(192 * i + 32, frogMovDistance * 4 + offset);
+
+		// Line 9 Large Lunks
 		vLine9.push_back(sf::Sprite(tObstacules));
 		vLine9[i].setTextureRect(sf::IntRect(0, 24, 96, 24));
-		vLine9[i].setPosition(192 * i + 32, frogMovDistance * 2 + 4);
+		vLine9[i].setPosition(192 * i + 32, frogMovDistance * 2 + offset);
 	}
+
 
 	while (window.isOpen())
 	{
@@ -330,9 +333,9 @@ void main()
 				}
 				break;
 			}
-			
+
 		}
-		
+
 		switch (actualScreen)
 		{
 		case SCREEN_TITLE:
@@ -341,10 +344,14 @@ void main()
 			window.display();
 			break;
 		case SCREEN_IN_GAME:
-			// Checking goal
-			if (frogY < frogMovDistance * 2)
+			// Checking Collisions and obstacules movement
+			actualLine = (int)((frogY - offset) / frogMovDistance);
+			frogSpeed = 0;
+			hit = true;
+			switch (actualLine)
 			{
-				int pos = (int)(frogX / frogMovDistance);
+			case 1: // Checking goal
+				pos = (int)(frogX / frogMovDistance);
 
 				if (pos % 2 == 1 && !vGoalFrogs[(int)(pos / 2)].second)
 				{
@@ -373,13 +380,325 @@ void main()
 					}
 					frogLifes--;
 				}
+				break;
+			case 2: // Line 9
+				for (int i = 0; i < MOUNT_OBSTACULES_2; i++)
+				{
+					if (frogX > vLine9[i].getPosition().x && frogX + frog.getTextureRect().width < vLine9[i].getPosition().x + vLine9[i].getTextureRect().width)
+					{
+						hit = false;
+						frog.move(velocityLine9 * time.asSeconds(), 0);
+					}
+
+				}
+				if (hit)
+				{
+					if (frogLifes > 0)
+					{
+						frogX = frogOriginalPosX;
+						frogY = frogOriginalPosY;
+					}
+					else
+					{
+						actualScreen = SCREEN_HIGHSCORES;
+						highscores.saveScore(frogScore);
+					}
+					frogLifes--;
+				}
+				else
+				{
+					// Here the frog will be moved
+				}
+				break;
+			case 3: // Line 8
+				for (int i = 0; i < MOUNT_OBSTACULES_3; i++)
+				{
+					if (frogX > vLine8[i].getPosition().x && frogX + frog.getTextureRect().width < vLine8[i].getPosition().x + vLine8[i].getTextureRect().width)
+					{
+						frog.move(velocityLine8 * time.asSeconds(), 0);
+						hit = false;
+					}
+
+				}
+				if (hit)
+				{
+					if (frogLifes > 0)
+					{
+						frogX = frogOriginalPosX;
+						frogY = frogOriginalPosY;
+					}
+					else
+					{
+						actualScreen = SCREEN_HIGHSCORES;
+						highscores.saveScore(frogScore);
+					}
+					frogLifes--;
+				}
+				break;
+			case 4: // Line 7
+				for (int i = 0; i < MOUNT_OBSTACULES_2; i++)
+				{
+					if (frogX > vLine7[i].getPosition().x && frogX + frog.getTextureRect().width < vLine7[i].getPosition().x + vLine7[i].getTextureRect().width)
+					{
+						frog.move(velocityLine7 * time.asSeconds(), 0);
+						hit = false;
+					}
+				}
+				if (hit)
+				{
+					if (frogLifes > 0)
+					{
+						frogX = frogOriginalPosX;
+						frogY = frogOriginalPosY;
+					}
+					else
+					{
+						actualScreen = SCREEN_HIGHSCORES;
+						highscores.saveScore(frogScore);
+					}
+					frogLifes--;
+				}
+				break;
+			case 5: // Line 6
+				for (int i = 0; i < MOUNT_OBSTACULES_3; i++)
+				{
+					if (frogX > vLine6[i].getPosition().x && frogX + frog.getTextureRect().width < vLine6[i].getPosition().x + vLine6[i].getTextureRect().width)
+					{
+						frog.move(velocityLine6 * time.asSeconds(), 0);
+						hit = false;
+						break;
+					}
+				}
+				if (hit)
+				{
+					if (frogLifes > 0)
+					{
+						frogX = frogOriginalPosX;
+						frogY = frogOriginalPosY;
+					}
+					else
+					{
+						actualScreen = SCREEN_HIGHSCORES;
+						highscores.saveScore(frogScore);
+					}
+					frogLifes--;
+				}
+				break;
+			case 6: // Line 5
+				for (int i = 0; i < MOUNT_OBSTACULES_3; i++)
+				{
+					if (frogX > vLine5[i].getPosition().x && frogX + frog.getTextureRect().width < vLine5[i].getPosition().x + vLine5[i].getTextureRect().width)
+					{
+
+						hit = false;
+					}
+				}
+				if (hit)
+				{
+					if (frogLifes > 0)
+					{
+						frogX = frogOriginalPosX;
+						frogY = frogOriginalPosY;
+					}
+					else
+					{
+						actualScreen = SCREEN_HIGHSCORES;
+						highscores.saveScore(frogScore);
+					}
+					frogLifes--;
+				}
+				else
+				{
+					frogSpeed = velocityLine5 * time.asSeconds();
+					frogX += frogSpeed;
+				}
+				break;
+			case 8: // Line 4
+				for (int i = 0; i < MOUNT_OBSTACULES_3; i++)
+				{
+					if (frogX + frog.getTextureRect().width < vLine4[i].getPosition().x + vLine4[i].getTextureRect().width)
+					{
+						if (frogX + frog.getTextureRect().width > vLine4[i].getPosition().x)
+						{
+							hit = false;
+							break;
+						}
+
+					}
+					else if (hit && frogX > vLine4[i].getPosition().x)
+					{
+						if (frogX < vLine4[i].getPosition().x + vLine4[i].getTextureRect().width)
+						{
+							hit = false;
+							break;
+						}
+					}
+				}
+				if (!hit)
+				{
+					if (frogLifes > 0)
+					{
+						frogX = frogOriginalPosX;
+						frogY = frogOriginalPosY;
+					}
+					else
+					{
+						actualScreen = SCREEN_HIGHSCORES;
+						highscores.saveScore(frogScore);
+					}
+					frogLifes--;
+				}
+				break;
+			case 9: // Line 3
+				for (int i = 0; i < MOUNT_OBSTACULES_2; i++)
+				{
+					if (frogX + frog.getTextureRect().width < vLine3[i].getPosition().x + vLine3[i].getTextureRect().width)
+					{
+						if (frogX + frog.getTextureRect().width > vLine3[i].getPosition().x)
+						{
+							hit = false;
+							break;
+						}
+
+					}
+					else if (hit && frogX > vLine3[i].getPosition().x)
+					{
+						if (frogX < vLine3[i].getPosition().x + vLine3[i].getTextureRect().width)
+						{
+							hit = false;
+							break;
+						}
+					}
+				}
+				if (!hit)
+				{
+					if (frogLifes > 0)
+					{
+						frogX = frogOriginalPosX;
+						frogY = frogOriginalPosY;
+					}
+					else
+					{
+						actualScreen = SCREEN_HIGHSCORES;
+						highscores.saveScore(frogScore);
+					}
+					frogLifes--;
+				}
+				break;
+			case 10: // Line 2
+				for (int i = 0; i < MOUNT_OBSTACULES_3; i++)
+				{
+					if (frogX + frog.getTextureRect().width < vLine2[i].getPosition().x + vLine2[i].getTextureRect().width)
+					{
+						if (frogX + frog.getTextureRect().width > vLine2[i].getPosition().x)
+						{
+							hit = false;
+							break;
+						}
+
+					}
+					else if (hit && frogX > vLine2[i].getPosition().x)
+					{
+						if (frogX < vLine2[i].getPosition().x + vLine2[i].getTextureRect().width)
+						{
+							hit = false;
+							break;
+						}
+					}
+				}
+				if (!hit)
+				{
+					if (frogLifes > 0)
+					{
+						frogX = frogOriginalPosX;
+						frogY = frogOriginalPosY;
+					}
+					else
+					{
+						actualScreen = SCREEN_HIGHSCORES;
+						highscores.saveScore(frogScore);
+					}
+					frogLifes--;
+				}
+				break;
+			case 11: //Line 1
+				for (int i = 0; i < MOUNT_OBSTACULES_3; i++)
+				{
+					if (frogX + frog.getTextureRect().width < vLine1[i].getPosition().x + vLine1[i].getTextureRect().width)
+					{
+						if (frogX + frog.getTextureRect().width > vLine1[i].getPosition().x)
+						{
+							hit = false;
+							break;
+						}
+
+					}
+					else if (hit && frogX > vLine1[i].getPosition().x)
+					{
+						if (frogX < vLine1[i].getPosition().x + vLine1[i].getTextureRect().width)
+						{
+							hit = false;
+							break;
+						}
+					}
+				}
+				if (!hit)
+				{
+					if (frogLifes > 0)
+					{
+						frogX = frogOriginalPosX;
+						frogY = frogOriginalPosY;
+					}
+					else
+					{
+						actualScreen = SCREEN_HIGHSCORES;
+						highscores.saveScore(frogScore);
+					}
+					frogLifes--;
+				}
+				break;
+			}
+
+			// Obstacules movement and limit
+			for (int i = 0; i < MOUNT_OBSTACULES_2; i++)
+			{
+				vLine3[i].move(velocityLine3 * time.asSeconds(), 0);
+				vLine7[i].move(velocityLine7 * time.asSeconds(), 0);
+				vLine9[i].move(velocityLine9 * time.asSeconds(), 0);
+
+				if (vLine3[i].getPosition().x > windowWidht + positionToReturn)
+					vLine3[i].move(-windowWidht - positionToReturn * 3, 0);
+				if (vLine7[i].getPosition().x < -positionToReturn)
+					vLine7[i].move(windowWidht + positionToReturn * 2, 0);
+				if (vLine9[i].getPosition().x > windowWidht + positionToReturn)
+					vLine9[i].move(-windowWidht - positionToReturn * 3, 0);
+			}
+			for (int i = 0; i < MOUNT_OBSTACULES_3; i++)
+			{
+				vLine1[i].move(velocityLine1 * time.asSeconds(), 0);
+				vLine2[i].move(velocityLine2 * time.asSeconds(), 0);
+				vLine4[i].move(velocityLine4 * time.asSeconds(), 0);
+				vLine5[i].move(velocityLine5 * time.asSeconds(), 0);
+				vLine6[i].move(velocityLine6 * time.asSeconds(), 0);
+				vLine8[i].move(velocityLine8 * time.asSeconds(), 0);
+
+				if (vLine1[i].getPosition().x > windowWidht + positionToReturn)
+					vLine1[i].move(-windowWidht - positionToReturn * 3, 0);
+				if (vLine2[i].getPosition().x < -positionToReturn)
+					vLine2[i].move(windowWidht + positionToReturn * 2, 0);
+				if (vLine4[i].getPosition().x < -positionToReturn)
+					vLine4[i].move(windowWidht + positionToReturn * 2, 0);
+				if (vLine5[i].getPosition().x > windowWidht + positionToReturn)
+					vLine5[i].move(-windowWidht - positionToReturn * 3, 0);
+				if (vLine6[i].getPosition().x > windowWidht + positionToReturn)
+					vLine6[i].move(-windowWidht - positionToReturn * 3, 0);
+				if (vLine8[i].getPosition().x < -positionToReturn)
+					vLine8[i].move(windowWidht + positionToReturn * 2, 0);
 			}
 
 			// Makes the Frog's translation
-			if(frogLifes >= 0)
-				frog.setPosition(frogX, frogY);
+			frog.setPosition(frogX, frogY);
 
-			// Drawing
 			window.clear();
 			window.draw(background);
 			window.draw(scoreTxt);
