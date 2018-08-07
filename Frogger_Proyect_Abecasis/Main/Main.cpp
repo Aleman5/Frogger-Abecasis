@@ -18,6 +18,8 @@ Font used: Arcade Classic. Download link -> https://www.dafont.com/arcade-classi
 #define SCREEN_TITLE 0
 #define SCREEN_IN_GAME 1
 #define SCREEN_HIGHSCORES 2
+#define MOUNT_OBSTACULES_2 2
+#define MOUNT_OBSTACULES_3 3
 
 using namespace std;
 
@@ -74,6 +76,9 @@ void main()
 			// Frog
 	sf::Texture tFrog;
 	loadTexture(tFrog, "Frog.png");
+			// Obstacules
+	sf::Texture tObstacules;
+	loadTexture(tObstacules, "Obstacules.png");
 
 
 	// Sprites
@@ -87,6 +92,17 @@ void main()
 	vector<pair<sf::Sprite, bool>> vGoalFrogs;
 			// Frog copies for the lifes
 	vector<sf::Sprite> vLifeFrogs;
+			// Obstacules
+	vector<sf::Sprite> vLine1; // Car
+	vector<sf::Sprite> vLine2; // Car
+	vector<sf::Sprite> vLine3; // Bus
+	vector<sf::Sprite> vLine4; // Car
+	vector<sf::Sprite> vLine5; // SmallLunks
+	vector<sf::Sprite> vLine6; // SmallLunks
+	vector<sf::Sprite> vLine7; // LargeLunks
+	vector<sf::Sprite> vLine8; // SmallLunks
+	vector<sf::Sprite> vLine9; // LargeLunks
+
 
 	// Variables
 			// Frog
@@ -100,6 +116,17 @@ void main()
 			// Frog copies
 	int mountOfGoals = 6;
 	int scorePerGoal = 100;
+			// Obstacules
+	float velocityLine1 = 1.4f;
+	float velocityLine2 = 1.7f;
+	float velocityLine3 = 1.9f;
+	float velocityLine4 = 1.5f;
+	float velocityLine5 = 1.2f;
+	float velocityLine6 = 2.0f;
+	float velocityLine7 = 1.6f;
+	float velocityLine8 = 1.8f;
+	float velocityLine9 = 1.9f;
+
 
 	// Text position
 	scoreTxt.setPosition(4, windowHeight - frogMovDistance + 4);
@@ -116,6 +143,61 @@ void main()
 	{
 		vLifeFrogs.push_back(sf::Sprite(tFrog));
 		vLifeFrogs[i].setPosition(i * frogMovDistance + 4, windowHeight - 60);
+	}
+
+	for (int i = 0; i < MOUNT_OBSTACULES_3; i++) // Line 1 Car
+	{
+		vLine1.push_back(sf::Sprite(tObstacules));
+		vLine1[i].setTextureRect(sf::IntRect(0, 0, 32, 24));
+		vLine1[i].setPosition(64 * i + 32, frogMovDistance * 11 + 4);
+	}
+	for (int i = 0; i < MOUNT_OBSTACULES_3; i++) // Line 2 Car
+	{
+		vLine2.push_back(sf::Sprite(tObstacules));
+		vLine2[i].setTextureRect(sf::IntRect(0, 0, 32, 24));
+		vLine2[i].setPosition(64 * i + 32, frogMovDistance * 10 + 4);
+	}
+	for (int i = 0; i < MOUNT_OBSTACULES_2; i++) // Line 3 Bus
+	{
+		vLine3.push_back(sf::Sprite(tObstacules));
+		vLine3[i].setTextureRect(sf::IntRect(32, 0, 64, 24));
+		vLine3[i].setPosition(128 * i + 32, frogMovDistance * 9 + 4);
+	}
+	for (int i = 0; i < MOUNT_OBSTACULES_3; i++) // Line 4 Car
+	{
+		vLine4.push_back(sf::Sprite(tObstacules));
+		vLine4[i].setTextureRect(sf::IntRect(0, 0, 32, 24));
+		vLine4[i].setPosition(64 * i + 32, frogMovDistance * 8 + 4);
+	}
+	for (int i = 0; i < MOUNT_OBSTACULES_3; i++) // Line 5 Small Lunks
+	{
+		vLine5.push_back(sf::Sprite(tObstacules));
+		vLine5[i].setTextureRect(sf::IntRect(0, 48, 64, 24));
+		vLine5[i].setPosition(96 * i + 32, frogMovDistance * 6 + 4);
+	}
+	for (int i = 0; i < MOUNT_OBSTACULES_3; i++) // Line 6 Small Lunks
+	{
+		vLine6.push_back(sf::Sprite(tObstacules));
+		vLine6[i].setTextureRect(sf::IntRect(0, 48, 64, 24));
+		vLine6[i].setPosition(96 * i + 32, frogMovDistance * 5 + 4);
+	}
+	for (int i = 0; i < MOUNT_OBSTACULES_2; i++) // Line 7 Large Lunks
+	{
+		vLine7.push_back(sf::Sprite(tObstacules));
+		vLine7[i].setTextureRect(sf::IntRect(0, 24, 96, 24));
+		vLine7[i].setPosition(192 * i + 32, frogMovDistance * 4 + 4);
+	}
+	for (int i = 0; i < MOUNT_OBSTACULES_3; i++) // Line 8 Small Lunks
+	{
+		vLine8.push_back(sf::Sprite(tObstacules));
+		vLine8[i].setTextureRect(sf::IntRect(0, 48, 64, 24));
+		vLine8[i].setPosition(96 * i + 32, frogMovDistance * 3 + 4);
+	}
+	for (int i = 0; i < MOUNT_OBSTACULES_2; i++) // Line 9 Large Lunks
+	{
+		vLine9.push_back(sf::Sprite(tObstacules));
+		vLine9[i].setTextureRect(sf::IntRect(0, 24, 96, 24));
+		vLine9[i].setPosition(192 * i + 32, frogMovDistance * 2 + 4);
 	}
 
 	while (window.isOpen())
@@ -306,6 +388,21 @@ void main()
 					window.draw(vGoalFrogs[i].first);
 			for (int i = 0; i < frogLifes; i++)
 				window.draw(vLifeFrogs[i]);
+			for (int i = 0; i < MOUNT_OBSTACULES_3; i++) // Lines 1, 2, 4, 5, 6, 8
+			{
+				window.draw(vLine1[i]);
+				window.draw(vLine2[i]);
+				window.draw(vLine4[i]);
+				window.draw(vLine5[i]);
+				window.draw(vLine6[i]);
+				window.draw(vLine8[i]);
+			}
+			for (int i = 0; i < MOUNT_OBSTACULES_2; i++) // Lines 3, 7, 9
+			{
+				window.draw(vLine3[i]);
+				window.draw(vLine7[i]);
+				window.draw(vLine9[i]);
+			}
 			window.draw(frog);
 			window.display();
 			break;
@@ -328,11 +425,12 @@ Objectives to complete the game:
 	+ Frog dies if collides with the wall from 68 to 196 on the 'y' axis
 	+ Frog wins if reaches all the goals (6)
 	+ Frog loses if his LIFES are lost
-	- Make 3 obstacules (1 car, 1 bus and 1 trunk)
+	+ Make 3 obstacules (1 car, 1 bus and 1 trunk)
 	- Obstacules are teleported to the other part of the scene when they reach the limit of the map
 	+ Make the GUI for the game (Lifes left and *if I want* the score)
 	+ In case I use scores, save it in scores.dat
 	+ Make a Title Screen
 	- Include sounds
+	- Frog rotates when moving ( W - A - S - D )
 
 */
