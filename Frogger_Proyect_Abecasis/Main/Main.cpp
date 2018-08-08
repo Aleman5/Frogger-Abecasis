@@ -112,8 +112,7 @@ void main()
 			// Frog
 	int frogOriginalPosX = 196;
 	int frogOriginalPosY = 388;
-	int frogX = frogOriginalPosX;
-	int frogY = frogOriginalPosY;
+	frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 	int frogMovDistance = 32;
 	int frogLifes = 3;
 	int frogScore = 0;
@@ -229,8 +228,7 @@ void main()
 							actualScreen = SCREEN_IN_GAME;
 
 							// Reseting values to default
-							frogX = frogOriginalPosX;
-							frogY = frogOriginalPosY;
+							frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 							frogLifes = 3;
 							frogScore = 0;
 							changeScore(frogScore, 0, scoreTxt);
@@ -259,25 +257,24 @@ void main()
 					switch (event.key.code)
 					{
 					case sf::Keyboard::W:
-						frogY -= frogMovDistance;
+						frog.move(0, -frogMovDistance);
 						break;
 					case sf::Keyboard::S:
-						if (frogY + frogMovDistance < windowHeight - 66)
-							frogY += frogMovDistance;
+						if (frog.getPosition().y + frogMovDistance < windowHeight - 66)
+							frog.move(0, frogMovDistance);
 						break;
 					case sf::Keyboard::A:
-						if (frogX - frogMovDistance > 0)
+						if (frog.getPosition().x - frogMovDistance > 0)
 						{
-							frogX -= frogMovDistance;
+							frog.move(-frogMovDistance, 0);
 						}
 						else
 						{
-							if (frogY > 67 && frogY < 197) // Collision with the water wall
+							if (frog.getPosition().y > 67 && frog.getPosition().y < 197) // Collision with the water wall
 							{
 								if (frogLifes > 0)
 								{
-									frogX = frogOriginalPosX;
-									frogY = frogOriginalPosY;
+									frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 								}
 								else
 								{
@@ -289,18 +286,17 @@ void main()
 						}
 						break;
 					case sf::Keyboard::D:
-						if (frogX + frogMovDistance < windowWidht)
+						if (frog.getPosition().x + frogMovDistance < windowWidht)
 						{
-							frogX += frogMovDistance;
+							frog.move(frogMovDistance, 0);
 						}
 						else
 						{
-							if (frogY > 67 && frogY < 197) // Collision with the water wall
+							if (frog.getPosition().y > 67 && frog.getPosition().y < 197) // Collision with the water wall
 							{
 								if (frogLifes > 0)
 								{
-									frogX = frogOriginalPosX;
-									frogY = frogOriginalPosY;
+									frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 								}
 								else
 								{
@@ -345,13 +341,13 @@ void main()
 			break;
 		case SCREEN_IN_GAME:
 			// Checking Collisions and obstacules movement
-			actualLine = (int)((frogY - offset) / frogMovDistance);
+			actualLine = (int)((frog.getPosition().y - offset) / frogMovDistance);
 			frogSpeed = 0;
 			hit = true;
 			switch (actualLine)
 			{
 			case 1: // Checking goal
-				pos = (int)(frogX / frogMovDistance);
+				pos = (int)(frog.getPosition().x / frogMovDistance);
 
 				if (pos % 2 == 1 && !vGoalFrogs[(int)(pos / 2)].second)
 				{
@@ -363,15 +359,13 @@ void main()
 						for (int i = 0; i < mountOfGoals; i++)
 							vGoalFrogs[i].second = false;
 
-					frogX = frogOriginalPosX;
-					frogY = frogOriginalPosY;
+					frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 				}
 				else // In this case, the frog didnt reach de goal correctly
 				{
 					if (frogLifes > 0)
 					{
-						frogX = frogOriginalPosX;
-						frogY = frogOriginalPosY;
+						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 					}
 					else
 					{
@@ -384,7 +378,8 @@ void main()
 			case 2: // Line 9
 				for (int i = 0; i < MOUNT_OBSTACULES_2; i++)
 				{
-					if (frogX > vLine9[i].getPosition().x && frogX + frog.getTextureRect().width < vLine9[i].getPosition().x + vLine9[i].getTextureRect().width)
+					if (frog.getPosition().x > vLine9[i].getPosition().x && 
+						frog.getPosition().x + frog.getTextureRect().width < vLine9[i].getPosition().x + vLine9[i].getTextureRect().width)
 					{
 						hit = false;
 						frog.move(velocityLine9 * time.asSeconds(), 0);
@@ -395,8 +390,7 @@ void main()
 				{
 					if (frogLifes > 0)
 					{
-						frogX = frogOriginalPosX;
-						frogY = frogOriginalPosY;
+						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 					}
 					else
 					{
@@ -405,15 +399,12 @@ void main()
 					}
 					frogLifes--;
 				}
-				else
-				{
-					// Here the frog will be moved
-				}
 				break;
 			case 3: // Line 8
 				for (int i = 0; i < MOUNT_OBSTACULES_3; i++)
 				{
-					if (frogX > vLine8[i].getPosition().x && frogX + frog.getTextureRect().width < vLine8[i].getPosition().x + vLine8[i].getTextureRect().width)
+					if (frog.getPosition().x > vLine8[i].getPosition().x && 
+						frog.getPosition().x + frog.getTextureRect().width < vLine8[i].getPosition().x + vLine8[i].getTextureRect().width)
 					{
 						frog.move(velocityLine8 * time.asSeconds(), 0);
 						hit = false;
@@ -424,8 +415,7 @@ void main()
 				{
 					if (frogLifes > 0)
 					{
-						frogX = frogOriginalPosX;
-						frogY = frogOriginalPosY;
+						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 					}
 					else
 					{
@@ -438,7 +428,8 @@ void main()
 			case 4: // Line 7
 				for (int i = 0; i < MOUNT_OBSTACULES_2; i++)
 				{
-					if (frogX > vLine7[i].getPosition().x && frogX + frog.getTextureRect().width < vLine7[i].getPosition().x + vLine7[i].getTextureRect().width)
+					if (frog.getPosition().x > vLine7[i].getPosition().x &&
+						frog.getPosition().x + frog.getTextureRect().width < vLine7[i].getPosition().x + vLine7[i].getTextureRect().width)
 					{
 						frog.move(velocityLine7 * time.asSeconds(), 0);
 						hit = false;
@@ -448,8 +439,7 @@ void main()
 				{
 					if (frogLifes > 0)
 					{
-						frogX = frogOriginalPosX;
-						frogY = frogOriginalPosY;
+						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 					}
 					else
 					{
@@ -462,7 +452,8 @@ void main()
 			case 5: // Line 6
 				for (int i = 0; i < MOUNT_OBSTACULES_3; i++)
 				{
-					if (frogX > vLine6[i].getPosition().x && frogX + frog.getTextureRect().width < vLine6[i].getPosition().x + vLine6[i].getTextureRect().width)
+					if (frog.getPosition().x > vLine6[i].getPosition().x &&
+						frog.getPosition().x + frog.getTextureRect().width < vLine6[i].getPosition().x + vLine6[i].getTextureRect().width)
 					{
 						frog.move(velocityLine6 * time.asSeconds(), 0);
 						hit = false;
@@ -473,8 +464,7 @@ void main()
 				{
 					if (frogLifes > 0)
 					{
-						frogX = frogOriginalPosX;
-						frogY = frogOriginalPosY;
+						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 					}
 					else
 					{
@@ -487,18 +477,19 @@ void main()
 			case 6: // Line 5
 				for (int i = 0; i < MOUNT_OBSTACULES_3; i++)
 				{
-					if (frogX > vLine5[i].getPosition().x && frogX + frog.getTextureRect().width < vLine5[i].getPosition().x + vLine5[i].getTextureRect().width)
+					if (frog.getPosition().x > vLine5[i].getPosition().x &&
+						frog.getPosition().x + frog.getTextureRect().width < vLine5[i].getPosition().x + vLine5[i].getTextureRect().width)
 					{
-
+						frog.move(velocityLine5 * time.asSeconds(), 0);
 						hit = false;
+						break;
 					}
 				}
 				if (hit)
 				{
 					if (frogLifes > 0)
 					{
-						frogX = frogOriginalPosX;
-						frogY = frogOriginalPosY;
+						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 					}
 					else
 					{
@@ -507,27 +498,22 @@ void main()
 					}
 					frogLifes--;
 				}
-				else
-				{
-					frogSpeed = velocityLine5 * time.asSeconds();
-					frogX += frogSpeed;
-				}
 				break;
 			case 8: // Line 4
 				for (int i = 0; i < MOUNT_OBSTACULES_3; i++)
 				{
-					if (frogX + frog.getTextureRect().width < vLine4[i].getPosition().x + vLine4[i].getTextureRect().width)
+					if (frog.getPosition().x + frog.getTextureRect().width < vLine4[i].getPosition().x + vLine4[i].getTextureRect().width)
 					{
-						if (frogX + frog.getTextureRect().width > vLine4[i].getPosition().x)
+						if (frog.getPosition().x + frog.getTextureRect().width > vLine4[i].getPosition().x)
 						{
 							hit = false;
 							break;
 						}
 
 					}
-					else if (hit && frogX > vLine4[i].getPosition().x)
+					else if (hit && frog.getPosition().x > vLine4[i].getPosition().x)
 					{
-						if (frogX < vLine4[i].getPosition().x + vLine4[i].getTextureRect().width)
+						if (frog.getPosition().x < vLine4[i].getPosition().x + vLine4[i].getTextureRect().width)
 						{
 							hit = false;
 							break;
@@ -538,8 +524,7 @@ void main()
 				{
 					if (frogLifes > 0)
 					{
-						frogX = frogOriginalPosX;
-						frogY = frogOriginalPosY;
+						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 					}
 					else
 					{
@@ -552,18 +537,18 @@ void main()
 			case 9: // Line 3
 				for (int i = 0; i < MOUNT_OBSTACULES_2; i++)
 				{
-					if (frogX + frog.getTextureRect().width < vLine3[i].getPosition().x + vLine3[i].getTextureRect().width)
+					if (frog.getPosition().x + frog.getTextureRect().width < vLine3[i].getPosition().x + vLine3[i].getTextureRect().width)
 					{
-						if (frogX + frog.getTextureRect().width > vLine3[i].getPosition().x)
+						if (frog.getPosition().x + frog.getTextureRect().width > vLine3[i].getPosition().x)
 						{
 							hit = false;
 							break;
 						}
 
 					}
-					else if (hit && frogX > vLine3[i].getPosition().x)
+					else if (hit && frog.getPosition().x > vLine3[i].getPosition().x)
 					{
-						if (frogX < vLine3[i].getPosition().x + vLine3[i].getTextureRect().width)
+						if (frog.getPosition().x < vLine3[i].getPosition().x + vLine3[i].getTextureRect().width)
 						{
 							hit = false;
 							break;
@@ -574,8 +559,7 @@ void main()
 				{
 					if (frogLifes > 0)
 					{
-						frogX = frogOriginalPosX;
-						frogY = frogOriginalPosY;
+						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 					}
 					else
 					{
@@ -588,18 +572,18 @@ void main()
 			case 10: // Line 2
 				for (int i = 0; i < MOUNT_OBSTACULES_3; i++)
 				{
-					if (frogX + frog.getTextureRect().width < vLine2[i].getPosition().x + vLine2[i].getTextureRect().width)
+					if (frog.getPosition().x + frog.getTextureRect().width < vLine2[i].getPosition().x + vLine2[i].getTextureRect().width)
 					{
-						if (frogX + frog.getTextureRect().width > vLine2[i].getPosition().x)
+						if (frog.getPosition().x + frog.getTextureRect().width > vLine2[i].getPosition().x)
 						{
 							hit = false;
 							break;
 						}
 
 					}
-					else if (hit && frogX > vLine2[i].getPosition().x)
+					else if (hit && frog.getPosition().x > vLine2[i].getPosition().x)
 					{
-						if (frogX < vLine2[i].getPosition().x + vLine2[i].getTextureRect().width)
+						if (frog.getPosition().x < vLine2[i].getPosition().x + vLine2[i].getTextureRect().width)
 						{
 							hit = false;
 							break;
@@ -610,8 +594,7 @@ void main()
 				{
 					if (frogLifes > 0)
 					{
-						frogX = frogOriginalPosX;
-						frogY = frogOriginalPosY;
+						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 					}
 					else
 					{
@@ -624,18 +607,18 @@ void main()
 			case 11: //Line 1
 				for (int i = 0; i < MOUNT_OBSTACULES_3; i++)
 				{
-					if (frogX + frog.getTextureRect().width < vLine1[i].getPosition().x + vLine1[i].getTextureRect().width)
+					if (frog.getPosition().x + frog.getTextureRect().width < vLine1[i].getPosition().x + vLine1[i].getTextureRect().width)
 					{
-						if (frogX + frog.getTextureRect().width > vLine1[i].getPosition().x)
+						if (frog.getPosition().x + frog.getTextureRect().width > vLine1[i].getPosition().x)
 						{
 							hit = false;
 							break;
 						}
 
 					}
-					else if (hit && frogX > vLine1[i].getPosition().x)
+					else if (hit && frog.getPosition().x > vLine1[i].getPosition().x)
 					{
-						if (frogX < vLine1[i].getPosition().x + vLine1[i].getTextureRect().width)
+						if (frog.getPosition().x < vLine1[i].getPosition().x + vLine1[i].getTextureRect().width)
 						{
 							hit = false;
 							break;
@@ -646,8 +629,7 @@ void main()
 				{
 					if (frogLifes > 0)
 					{
-						frogX = frogOriginalPosX;
-						frogY = frogOriginalPosY;
+						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 					}
 					else
 					{
@@ -696,8 +678,6 @@ void main()
 					vLine8[i].move(windowWidht + positionToReturn * 2, 0);
 			}
 
-			// Makes the Frog's translation
-			frog.setPosition(frogX, frogY);
 
 			window.clear();
 			window.draw(background);
