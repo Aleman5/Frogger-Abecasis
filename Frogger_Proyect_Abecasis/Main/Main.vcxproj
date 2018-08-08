@@ -87,7 +87,8 @@
       <Command>copy "$(SolutionDir)SFML-2.5.0\bin" "$(OutDir)"
 copy "$(SolutionDir)Main\*.png" "$(OutDir)"
 copy "$(SolutionDir)Main\scores.dat" "$(OutDir)"
-copy "$(SolutionDir)Main\ARCADECLASSIC.TTF" "$(OutDir)"</Command>
+copy "$(SolutionDir)Main\ARCADECLASSIC.TTF" "$(OutDir)"
+copy "$(SolutionDir)Main\*.wav" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -114,11 +115,14 @@ copy "$(SolutionDir)Main\ARCADECLASSIC.TTF" "$(OutDir)"</Command>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)SFML-2.5.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-window-s.lib;sfml-system-s.lib;sfml-graphics-s.lib;sfml-audio-s.lib;opengl32.lib;freetype.lib;winmm.lib;gdi32.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)Main\*.png" "$(OutDir)"
 copy "$(SolutionDir)Main\scores.dat" "$(OutDir)"
-copy "$(SolutionDir)Main\ARCADECLASSIC.TTF" "$(OutDir)"</Command>
+copy "$(SolutionDir)Main\ARCADECLASSIC.TTF" "$(OutDir)"
+copy "$(SolutionDir)Main\*.wav" "$(OutDir)"
+copy "$(SolutionDir)SFML-2.5.0\bin\openal32.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

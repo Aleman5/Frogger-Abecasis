@@ -1,15 +1,33 @@
 /*
 
+Alejandro Abecasis:
+	- LinkedIn ->			  https://www.linkedin.com/in/alejandroabecasis/
+	- GitHub (Game Link) ->   https://github.com/Aleman5/Frogger-Abecasis
+	- Email ->				  ale.bros@hotmail.com
 
+Assets used:
+	- Frog ->				  https://www.piskelapp.com/p/agxzfnBpc2tlbC1hcHByEwsSBlBpc2tlbBiAgMD_lZ3cCww/view
+	- Obstacules ->			  https://www.piskelapp.com/p/agxzfnBpc2tlbC1hcHByEwsSBlBpc2tlbBiAgMD_lfunCww/view
 
-Font used: Arcade Classic. Download link -> https://www.dafont.com/arcade-classic-pizz.font
+Font used: 
+	- Arcade Classic ->		  https://www.dafont.com/arcade-classic-pizz.font
+
+Sounds used:
+	- Hitted by a car ->	  https://freesound.org/people/LittleRobotSoundFactory/sounds/270338/
+	- Falling to the water -> https://freesound.org/people/LittleRobotSoundFactory/sounds/270316/
+	- Reaching a hole ->	  https://freesound.org/people/LittleRobotSoundFactory/sounds/270341/
+	- Reaching the 6 holes -> https://freesound.org/people/LittleRobotSoundFactory/sounds/270330/
+	- Background Music ->	  https://freesound.org/people/DirtyJewbs/sounds/159392/
+
+Extra data:
+	- Library used ->		  https://www.sfml-dev.org/
+	- In case of having problems opening openal32.dll use this link -> https://www.dropbox.com/s/2jrp6fvqzln3r5f/openal%20instalador.zip?dl=0
 
 */
 
 
 #include<iostream>
 #include<vector>
-#include"SFML/Window.hpp"
 #include"SFML/Audio.hpp"
 #include"SFML/Graphics.hpp"
 #include"TitleScreen.h"
@@ -20,6 +38,7 @@ Font used: Arcade Classic. Download link -> https://www.dafont.com/arcade-classi
 #define SCREEN_HIGHSCORES 2
 #define MOUNT_OBSTACULES_2 2
 #define MOUNT_OBSTACULES_3 3
+#define MOUNT_GOALS 6
 
 using namespace std;
 
@@ -68,6 +87,28 @@ void main()
 	scoreTxt.setFont(font);
 	scoreTxt.setCharacterSize(24);
 	scoreTxt.setFillColor(sf::Color::White);
+	sf::Text levelTxt;
+	levelTxt.setFont(font);
+	levelTxt.setCharacterSize(24);
+	levelTxt.setFillColor(sf::Color::White);
+
+	// Sounds
+	sf::Sound sound;
+	sound.setVolume(10);
+	sf::Sound winSound;
+	winSound.setVolume(12);
+	sf::SoundBuffer sbCarHit;
+	sbCarHit.loadFromFile("CarHit.wav");
+	sf::SoundBuffer sbFallingWater;
+	sbFallingWater.loadFromFile("FallingWater.wav");
+	sf::SoundBuffer sbGoalReached;
+	sbGoalReached.loadFromFile("GoalReached.wav");
+	sf::SoundBuffer sbWinLevel;
+	sbWinLevel.loadFromFile("WinningALevel.wav");
+	sf::Music mBackgroundMusic;
+	mBackgroundMusic.openFromFile("BackgroundMusic.wav");
+	mBackgroundMusic.setVolume(4);
+	mBackgroundMusic.setLoop(true);
 
 	// Textures
 			// Background
@@ -105,9 +146,12 @@ void main()
 
 
 	// Variables
+			// General purposes
 	int offset = 4;
 	int actualLine = 0;
 	int pos = 0;
+	int goalsReached = 0;
+	int actualLevel = 1;
 	bool hit = false;
 			// Frog
 	int frogOriginalPosX = 196;
@@ -118,28 +162,31 @@ void main()
 	int frogScore = 0;
 	float frogSpeed = 0;
 			// Frog copies
-	int mountOfGoals = 6;
-	int scorePerGoal = 100;
+	int scorePerGoal = 50;
 			// Obstacules
 	int positionToReturn = 128;
-	float velocityLine1 =  1.4f;
-	float velocityLine2 = -1.7f;
-	float velocityLine3 =  1.9f;
-	float velocityLine4 = -1.5f;
-	float velocityLine5 =  1.2f;
-	float velocityLine6 =  2.0f;
-	float velocityLine7 = -1.5f;
-	float velocityLine8 = -1.8f;
-	float velocityLine9 =  1.9f;
+	float velocityLine1 =  1.7f;
+	float velocityLine2 = -2.2f;
+	float velocityLine3 =  2.6f;
+	float velocityLine4 = -2.1f;
+	float velocityLine5 =  1.7f;
+	float velocityLine6 =  2.5f;
+	float velocityLine7 = -2.3f;
+	float velocityLine8 = -2.6f;
+	float velocityLine9 =  2.2f;
+	float velocityExtraPerWin = 0.3f;
 	sf::Time time = sf::seconds(0.01f);
 
 
 	// Text position
 	scoreTxt.setPosition(offset, windowHeight - frogMovDistance + offset);
 	changeScore(frogScore, 0, scoreTxt);
+	levelTxt.setPosition(windowWidht - 96, windowHeight - frogMovDistance + offset);
+	levelTxt.setString("Level " + to_string(actualLevel));
+
 
 	// Initialization
-	for (int i = 0; i < mountOfGoals; i++)
+	for (int i = 0; i < MOUNT_GOALS; i++)
 	{
 		vGoalFrogs.push_back(make_pair(sf::Sprite(tFrog), false));
 		vGoalFrogs[i].first.setPosition((i) * frogMovDistance * 2 + frogMovDistance + offset, 36);
@@ -156,49 +203,49 @@ void main()
 		// Line 1 Car
 		vLine1.push_back(sf::Sprite(tObstacules));
 		vLine1[i].setTextureRect(sf::IntRect(0, 0, 32, 24));
-		vLine1[i].setPosition(64 * i + 32, frogMovDistance * 11 + offset);
+		vLine1[i].setPosition(80 * i + 32, frogMovDistance * 11 + offset);
 
 		// Line 2 Car
 		vLine2.push_back(sf::Sprite(tObstacules));
-		vLine2[i].setTextureRect(sf::IntRect(0, 0, 32, 24));
-		vLine2[i].setPosition(64 * i + 32, frogMovDistance * 10 + offset);
+		vLine2[i].setTextureRect(sf::IntRect(96, 0, 32, 24));
+		vLine2[i].setPosition(96 * i + 32, frogMovDistance * 10 + offset);
 
 		// Line 4 Car
 		vLine4.push_back(sf::Sprite(tObstacules));
-		vLine4[i].setTextureRect(sf::IntRect(0, 0, 32, 24));
-		vLine4[i].setPosition(64 * i + 32, frogMovDistance * 8 + offset);
+		vLine4[i].setTextureRect(sf::IntRect(96, 0, 32, 24));
+		vLine4[i].setPosition(96 * i + 32, frogMovDistance * 8 + offset);
 
 		// Line 5 Small Lunks
 		vLine5.push_back(sf::Sprite(tObstacules));
-		vLine5[i].setTextureRect(sf::IntRect(0, 48, 64, 24));
-		vLine5[i].setPosition(96 * i + 32, frogMovDistance * 6 + offset);
+		vLine5[i].setTextureRect(sf::IntRect(0, 48, 96, 24));
+		vLine5[i].setPosition(160 * i + 32, frogMovDistance * 6 + offset);
 
 		// Line 6 Small Lunks
 		vLine6.push_back(sf::Sprite(tObstacules));
-		vLine6[i].setTextureRect(sf::IntRect(0, 48, 64, 24));
-		vLine6[i].setPosition(96 * i + 32, frogMovDistance * 5 + offset);
+		vLine6[i].setTextureRect(sf::IntRect(0, 48, 96, 24));
+		vLine6[i].setPosition(160 * i + 32, frogMovDistance * 5 + offset);
 
 		// Line 8 Small Lunks
 		vLine8.push_back(sf::Sprite(tObstacules));
-		vLine8[i].setTextureRect(sf::IntRect(0, 48, 64, 24));
-		vLine8[i].setPosition(96 * i + 32, frogMovDistance * 3 + offset);
+		vLine8[i].setTextureRect(sf::IntRect(0, 48, 96, 24));
+		vLine8[i].setPosition(192 * i + 32, frogMovDistance * 3 + offset);
 	}
 	for (int i = 0; i < MOUNT_OBSTACULES_2; i++) 
 	{
 		// Line 3 Bus
 		vLine3.push_back(sf::Sprite(tObstacules));
 		vLine3[i].setTextureRect(sf::IntRect(32, 0, 64, 24));
-		vLine3[i].setPosition(128 * i + 32, frogMovDistance * 9 + offset);
+		vLine3[i].setPosition(160 * i + 32, frogMovDistance * 9 + offset);
 
 		// Line 7 Large Lunks
 		vLine7.push_back(sf::Sprite(tObstacules));
-		vLine7[i].setTextureRect(sf::IntRect(0, 24, 96, 24));
-		vLine7[i].setPosition(192 * i + 32, frogMovDistance * 4 + offset);
+		vLine7[i].setTextureRect(sf::IntRect(0, 24, 128, 24));
+		vLine7[i].setPosition(224 * i + 32, frogMovDistance * 4 + offset);
 
 		// Line 9 Large Lunks
 		vLine9.push_back(sf::Sprite(tObstacules));
-		vLine9[i].setTextureRect(sf::IntRect(0, 24, 96, 24));
-		vLine9[i].setPosition(192 * i + 32, frogMovDistance * 2 + offset);
+		vLine9[i].setTextureRect(sf::IntRect(0, 24, 128, 24));
+		vLine9[i].setPosition(224 * i + 32, frogMovDistance * 2 + offset);
 	}
 
 
@@ -226,13 +273,16 @@ void main()
 						{
 						case 0: // Start Game
 							actualScreen = SCREEN_IN_GAME;
+							mBackgroundMusic.play();
 
 							// Reseting values to default
+							goalsReached = 0;
+							actualLevel = 1;
 							frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 							frogLifes = 3;
 							frogScore = 0;
 							changeScore(frogScore, 0, scoreTxt);
-							for (int i = 0; i < mountOfGoals; i++)
+							for (int i = 0; i < MOUNT_GOALS; i++)
 								vGoalFrogs[i].second = false;
 							break;
 						case 1: // Open Highscore Screen
@@ -261,7 +311,9 @@ void main()
 						break;
 					case sf::Keyboard::S:
 						if (frog.getPosition().y + frogMovDistance < windowHeight - 66)
+						{
 							frog.move(0, frogMovDistance);
+						}
 						break;
 					case sf::Keyboard::A:
 						if (frog.getPosition().x - frogMovDistance > 0)
@@ -275,11 +327,15 @@ void main()
 								if (frogLifes > 0)
 								{
 									frog.setPosition(frogOriginalPosX, frogOriginalPosY);
+									sound.setBuffer(sbFallingWater);
+									sound.play();
 								}
 								else
 								{
 									actualScreen = SCREEN_HIGHSCORES;
 									highscores.saveScore(frogScore);
+									winSound.stop();
+									mBackgroundMusic.stop();
 								}
 								frogLifes--;
 							}
@@ -297,11 +353,15 @@ void main()
 								if (frogLifes > 0)
 								{
 									frog.setPosition(frogOriginalPosX, frogOriginalPosY);
+									sound.setBuffer(sbFallingWater);
+									sound.play();
 								}
 								else
 								{
 									actualScreen = SCREEN_HIGHSCORES;
 									highscores.saveScore(frogScore);
+									winSound.stop();
+									mBackgroundMusic.stop();
 								}
 								frogLifes--;
 							}
@@ -309,6 +369,8 @@ void main()
 						break;
 					case sf::Keyboard::Space:
 						actualScreen = SCREEN_HIGHSCORES;
+						winSound.stop();
+						mBackgroundMusic.stop();
 						break;
 					}
 					break;
@@ -353,11 +415,39 @@ void main()
 				{
 					vGoalFrogs[(int)(pos / 2)].second = true;
 
-					changeScore(frogScore, scorePerGoal, scoreTxt);
+					changeScore(frogScore, actualLevel * 50 + scorePerGoal, scoreTxt);
 
-					if (frogScore % (scorePerGoal * 6) == 0)
-						for (int i = 0; i < mountOfGoals; i++)
+					goalsReached++;
+
+					if (goalsReached == MOUNT_GOALS)
+					{
+						for (int i = 0; i < MOUNT_GOALS; i++)
 							vGoalFrogs[i].second = false;
+						changeScore(frogScore, scorePerGoal * 4, scoreTxt);
+
+						velocityLine1 += velocityExtraPerWin;
+						velocityLine2 += velocityExtraPerWin;
+						velocityLine3 += velocityExtraPerWin;
+						velocityLine4 += velocityExtraPerWin;
+						velocityLine5 += velocityExtraPerWin;
+						velocityLine6 += velocityExtraPerWin;
+						velocityLine7 += velocityExtraPerWin;
+						velocityLine8 += velocityExtraPerWin;
+						velocityLine9 += velocityExtraPerWin;
+
+						goalsReached = 0;
+
+						actualLevel++;
+						levelTxt.setString("Level " + to_string(actualLevel));
+
+						winSound.setBuffer(sbWinLevel);
+						winSound.play();
+					}
+					else
+					{
+						winSound.setBuffer(sbGoalReached);
+						winSound.play();
+					}
 
 					frog.setPosition(frogOriginalPosX, frogOriginalPosY);
 				}
@@ -366,11 +456,15 @@ void main()
 					if (frogLifes > 0)
 					{
 						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
+						sound.setBuffer(sbCarHit);
+						sound.play();
 					}
 					else
 					{
 						actualScreen = SCREEN_HIGHSCORES;
 						highscores.saveScore(frogScore);
+						winSound.stop();
+						mBackgroundMusic.stop();
 					}
 					frogLifes--;
 				}
@@ -391,11 +485,15 @@ void main()
 					if (frogLifes > 0)
 					{
 						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
+						sound.setBuffer(sbFallingWater);
+						sound.play();
 					}
 					else
 					{
 						actualScreen = SCREEN_HIGHSCORES;
 						highscores.saveScore(frogScore);
+						winSound.stop();
+						mBackgroundMusic.stop();
 					}
 					frogLifes--;
 				}
@@ -416,11 +514,15 @@ void main()
 					if (frogLifes > 0)
 					{
 						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
+						sound.setBuffer(sbFallingWater);
+						sound.play();
 					}
 					else
 					{
 						actualScreen = SCREEN_HIGHSCORES;
 						highscores.saveScore(frogScore);
+						winSound.stop();
+						mBackgroundMusic.stop();
 					}
 					frogLifes--;
 				}
@@ -440,11 +542,15 @@ void main()
 					if (frogLifes > 0)
 					{
 						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
+						sound.setBuffer(sbFallingWater);
+						sound.play();
 					}
 					else
 					{
 						actualScreen = SCREEN_HIGHSCORES;
 						highscores.saveScore(frogScore);
+						winSound.stop();
+						mBackgroundMusic.stop();
 					}
 					frogLifes--;
 				}
@@ -465,11 +571,15 @@ void main()
 					if (frogLifes > 0)
 					{
 						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
+						sound.setBuffer(sbFallingWater);
+						sound.play();
 					}
 					else
 					{
 						actualScreen = SCREEN_HIGHSCORES;
 						highscores.saveScore(frogScore);
+						winSound.stop();
+						mBackgroundMusic.stop();
 					}
 					frogLifes--;
 				}
@@ -490,11 +600,15 @@ void main()
 					if (frogLifes > 0)
 					{
 						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
+						sound.setBuffer(sbCarHit);
+						sound.play();
 					}
 					else
 					{
 						actualScreen = SCREEN_HIGHSCORES;
 						highscores.saveScore(frogScore);
+						winSound.stop();
+						mBackgroundMusic.stop();
 					}
 					frogLifes--;
 				}
@@ -525,11 +639,15 @@ void main()
 					if (frogLifes > 0)
 					{
 						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
+						sound.setBuffer(sbCarHit);
+						sound.play();
 					}
 					else
 					{
 						actualScreen = SCREEN_HIGHSCORES;
 						highscores.saveScore(frogScore);
+						winSound.stop();
+						mBackgroundMusic.stop();
 					}
 					frogLifes--;
 				}
@@ -560,11 +678,15 @@ void main()
 					if (frogLifes > 0)
 					{
 						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
+						sound.setBuffer(sbCarHit);
+						sound.play();
 					}
 					else
 					{
 						actualScreen = SCREEN_HIGHSCORES;
 						highscores.saveScore(frogScore);
+						winSound.stop();
+						mBackgroundMusic.stop();
 					}
 					frogLifes--;
 				}
@@ -595,11 +717,15 @@ void main()
 					if (frogLifes > 0)
 					{
 						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
+						sound.setBuffer(sbCarHit);
+						sound.play();
 					}
 					else
 					{
 						actualScreen = SCREEN_HIGHSCORES;
 						highscores.saveScore(frogScore);
+						winSound.stop();
+						mBackgroundMusic.stop();
 					}
 					frogLifes--;
 				}
@@ -630,11 +756,15 @@ void main()
 					if (frogLifes > 0)
 					{
 						frog.setPosition(frogOriginalPosX, frogOriginalPosY);
+						sound.setBuffer(sbFallingWater);
+						sound.play();
 					}
 					else
 					{
 						actualScreen = SCREEN_HIGHSCORES;
 						highscores.saveScore(frogScore);
+						winSound.stop();
+						mBackgroundMusic.stop();
 					}
 					frogLifes--;
 				}
@@ -682,7 +812,8 @@ void main()
 			window.clear();
 			window.draw(background);
 			window.draw(scoreTxt);
-			for (int i = 0; i < mountOfGoals; i++)
+			window.draw(levelTxt);
+			for (int i = 0; i < MOUNT_GOALS; i++)
 				if (vGoalFrogs[i].second)
 					window.draw(vGoalFrogs[i].first);
 			for (int i = 0; i < frogLifes; i++)
@@ -714,22 +845,3 @@ void main()
 		
 	}
 }
-
-/*
-
-The objectives I didnt finish will have a (-) before
-	the text, in the other case will have (+)
-
-Objectives to complete the game:
-	+ Frog dies if collides with the wall from 68 to 196 on the 'y' axis
-	+ Frog wins if reaches all the goals (6)
-	+ Frog loses if his LIFES are lost
-	+ Make 3 obstacules (1 car, 1 bus and 1 trunk)
-	- Obstacules are teleported to the other part of the scene when they reach the limit of the map
-	+ Make the GUI for the game (Lifes left and *if I want* the score)
-	+ In case I use scores, save it in scores.dat
-	+ Make a Title Screen
-	- Include sounds
-	- Frog rotates when moving ( W - A - S - D )
-
-*/

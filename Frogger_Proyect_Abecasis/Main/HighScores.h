@@ -32,6 +32,6 @@ public:
 	void goUp();
 	void goDown();
 	int getActual();
-	bool saveScore(const int score);
+	void saveScore(const int score);
 };
 #endif // !HIGHSCORES

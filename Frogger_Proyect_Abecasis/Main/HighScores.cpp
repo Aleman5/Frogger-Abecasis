@@ -43,23 +43,22 @@ void Highscores::init()
 	displayTexts[0].setCharacterSize(40);
 	displayTexts[0].setString("Scores");
 	displayTexts[0].setFillColor(sf::Color::Blue);
-	displayTexts[0].setPosition(_windowWidht / 2 - 78, 50);
+	displayTexts[0].setPosition(_windowWidht / 2 - 75, 50);
 
 	displayTexts[1].setFont(font);
 	displayTexts[1].setCharacterSize(30);
 	displayTexts[1].setString("Main Menu");
 	displayTexts[1].setFillColor(sf::Color::Green);
-	displayTexts[1].setPosition(132, _windowHeight - 60);
+	displayTexts[1].setPosition(132, _windowHeight - 55);
 
 	for (int i = 0; i < MOUNT_OF_SCORES; i++)
 	{
 		scores[i].setFont(font);
 		scores[i].setCharacterSize(25);
 		scores[i].setFillColor(sf::Color::White);
-		scores[i].setPosition(140, i * 32 + 85);
+		scores[i].setPosition(_windowWidht / 2 - 27, i * 32 + 95);
 	}
 
-	//char* scoreA = new char();
 	int scoreAux = 0;
 	try
 	{
@@ -68,8 +67,6 @@ void Highscores::init()
 
 		for (int i = 0; i < MOUNT_OF_SCORES; i++)
 		{
-			//archivoScores.getline((char*)scoreA, sizeof(scoreAux));
-			//scoreAux = *scoreA;
 			archivoScores >> scoreAux;
 			lisScores.push_back(scoreAux);
 		}
@@ -79,7 +76,6 @@ void Highscores::init()
 	{
 		cerr << f.what();
 	}
-	//delete scoreA;
 
 	for (int i = 0; i < MOUNT_OF_SCORES; i++)
 	{
@@ -120,7 +116,7 @@ int Highscores::getActual()
 {
 	return actualElement;
 }
-bool Highscores::saveScore(const int score)
+void Highscores::saveScore(const int score)
 {
 	lisScores.push_front(score);
 	lisScores.sort();
