@@ -171,10 +171,10 @@ void main()
 	float velocityLine2 = -2.3f;
 	float velocityLine3 =  2.7f;
 	float velocityLine4 = -2.0f;
-	float velocityLine5 =  1.8f;
+	float velocityLine5 = -1.8f;
 	float velocityLine6 =  2.6f;
-	float velocityLine7 = -2.4f;
-	float velocityLine8 = -2.7f;
+	float velocityLine7 = -2.2f;
+	float velocityLine8 = -2.8f;
 	float velocityLine9 =  2.3f;
 	float velocityExtraPerWin = 0.35f;
 	sf::Time time = sf::seconds(0.01f);
@@ -802,8 +802,8 @@ void main()
 					vLine2[i].move(windowWidht + positionToReturn * 2, 0);
 				if (vLine4[i].getPosition().x < -positionToReturn)
 					vLine4[i].move(windowWidht + positionToReturn * 2, 0);
-				if (vLine5[i].getPosition().x > windowWidht + positionToReturn)
-					vLine5[i].move(-windowWidht - positionToReturn * 3, 0);
+				if (vLine5[i].getPosition().x < -positionToReturn)
+					vLine5[i].move(windowWidht + positionToReturn * 2, 0);
 				if (vLine6[i].getPosition().x > windowWidht + positionToReturn)
 					vLine6[i].move(-windowWidht - positionToReturn * 3, 0);
 				if (vLine8[i].getPosition().x < -positionToReturn)
