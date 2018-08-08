@@ -1,4 +1,4 @@
-#include"TitleScreen.h"
+﻿#include"TitleScreen.h"
 
 TitleScreen::TitleScreen(const int windowWidht, const int windowHeight)
 	: _windowWidht(windowWidht), _windowHeight(windowHeight)
@@ -18,6 +18,11 @@ void TitleScreen::init()
 	icon.setTexture(textIcon);
 	icon.setPosition(_windowWidht / 2 - 78, 32);
 	icon.scale(6, 6);
+
+	texControls.loadFromFile("Controls.png");
+
+	controls.setTexture(texControls);
+	controls.setPosition(_windowWidht - 110, _windowHeight - 110);
 
 	font.loadFromFile("ARCADECLASSIC.TTF");
 
@@ -49,7 +54,9 @@ void TitleScreen::init()
 void TitleScreen::draw(sf::RenderWindow& window)
 {
 	window.draw(icon);
+	window.draw(controls);
 	window.draw(title);
+	
 
 	for (int i = 0; i < MOUNT_OF_TEXTS; i++)
 		window.draw(displayTexts[i]);

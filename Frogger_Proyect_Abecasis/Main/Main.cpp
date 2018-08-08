@@ -82,6 +82,7 @@ void main()
 	sf::Font font;
 	font.loadFromFile("ARCADECLASSIC.TTF");
 
+
 	// Texts
 	sf::Text scoreTxt;
 	scoreTxt.setFont(font);
@@ -92,11 +93,12 @@ void main()
 	levelTxt.setCharacterSize(24);
 	levelTxt.setFillColor(sf::Color::White);
 
+
 	// Sounds
 	sf::Sound sound;
-	sound.setVolume(10);
+	sound.setVolume(5);
 	sf::Sound winSound;
-	winSound.setVolume(12);
+	winSound.setVolume(7);
 	sf::SoundBuffer sbCarHit;
 	sbCarHit.loadFromFile("CarHit.wav");
 	sf::SoundBuffer sbFallingWater;
@@ -107,7 +109,7 @@ void main()
 	sbWinLevel.loadFromFile("WinningALevel.wav");
 	sf::Music mBackgroundMusic;
 	mBackgroundMusic.openFromFile("BackgroundMusic.wav");
-	mBackgroundMusic.setVolume(4);
+	mBackgroundMusic.setVolume(3);
 	mBackgroundMusic.setLoop(true);
 
 	// Textures
@@ -165,16 +167,16 @@ void main()
 	int scorePerGoal = 50;
 			// Obstacules
 	int positionToReturn = 128;
-	float velocityLine1 =  1.7f;
-	float velocityLine2 = -2.2f;
-	float velocityLine3 =  2.6f;
-	float velocityLine4 = -2.1f;
-	float velocityLine5 =  1.7f;
-	float velocityLine6 =  2.5f;
-	float velocityLine7 = -2.3f;
-	float velocityLine8 = -2.6f;
-	float velocityLine9 =  2.2f;
-	float velocityExtraPerWin = 0.3f;
+	float velocityLine1 =  1.8f;
+	float velocityLine2 = -2.3f;
+	float velocityLine3 =  2.7f;
+	float velocityLine4 = -2.0f;
+	float velocityLine5 =  1.8f;
+	float velocityLine6 =  2.6f;
+	float velocityLine7 = -2.4f;
+	float velocityLine8 = -2.7f;
+	float velocityLine9 =  2.3f;
+	float velocityExtraPerWin = 0.35f;
 	sf::Time time = sf::seconds(0.01f);
 
 
@@ -262,10 +264,10 @@ void main()
 				case sf::Event::KeyPressed:
 					switch (event.key.code)
 					{
-					case sf::Keyboard::W:
+					case sf::Keyboard::Up:
 						titleScreen.goUp();
 						break;
-					case sf::Keyboard::S:
+					case sf::Keyboard::Down:
 						titleScreen.goDown();
 						break;
 					case sf::Keyboard::Space:
@@ -306,16 +308,16 @@ void main()
 				case sf::Event::KeyPressed:
 					switch (event.key.code)
 					{
-					case sf::Keyboard::W:
+					case sf::Keyboard::Up:
 						frog.move(0, -frogMovDistance);
 						break;
-					case sf::Keyboard::S:
+					case sf::Keyboard::Down:
 						if (frog.getPosition().y + frogMovDistance < windowHeight - 66)
 						{
 							frog.move(0, frogMovDistance);
 						}
 						break;
-					case sf::Keyboard::A:
+					case sf::Keyboard::Left:
 						if (frog.getPosition().x - frogMovDistance > 0)
 						{
 							frog.move(-frogMovDistance, 0);
@@ -341,7 +343,7 @@ void main()
 							}
 						}
 						break;
-					case sf::Keyboard::D:
+					case sf::Keyboard::Right:
 						if (frog.getPosition().x + frogMovDistance < windowWidht)
 						{
 							frog.move(frogMovDistance, 0);

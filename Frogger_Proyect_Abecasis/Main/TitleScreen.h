@@ -13,6 +13,8 @@ private:
 	int actualElement;
 	sf::Texture textIcon;
 	sf::Sprite icon;
+	sf::Texture texControls;
+	sf::Sprite controls;
 	sf::Font font;
 	sf::Text title;
 	sf::Text displayTexts[MOUNT_OF_TEXTS]; // Play - Highscores - Exit
