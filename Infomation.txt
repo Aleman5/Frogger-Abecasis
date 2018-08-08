@@ -1,0 +1,23 @@
+Alejandro Abecasis:
+	- LinkedIn ->	         https://www.linkedin.com/in/alejandroabecasis/
+	- GitHub (Game Link) ->   https://github.com/Aleman5/Frogger-Abecasis
+	- Email ->		         ale.bros@hotmail.com
+
+Assets used:
+	- Frog ->   	          https://www.piskelapp.com/p/agxzfnBpc2tlbC1hcHByEwsSBlBpc2tlbBiAgMD_lZ3cCww/view
+	- Obstacules ->  https://www.piskelapp.com/p/agxzfnBpc2tlbC1hcHByEwsSBlBpc2tlbBiAgMD_lfunCww/view
+	- Controls ->      https://www.piskelapp.com/p/agxzfnBpc2tlbC1hcHByEwsSBlBpc2tlbBiAgKCAqcHLCAw/view
+
+Font used: 
+	- Arcade Classic ->  https://www.dafont.com/arcade-classic-pizz.font
+
+Sounds used:
+	- Hitted by a car ->           https://freesound.org/people/LittleRobotSoundFactory/sounds/270338/
+	- Falling to the water ->   https://freesound.org/people/LittleRobotSoundFactory/sounds/270316/
+	- Reaching a hole ->	       https://freesound.org/people/LittleRobotSoundFactory/sounds/270341/
+	- Reaching the 6 holes -> https://freesound.org/people/LittleRobotSoundFactory/sounds/270330/
+	- Background Music ->     https://freesound.org/people/DirtyJewbs/sounds/159392/
+
+Extra data:
+	- Library used ->  https://www.sfml-dev.org/
+	- In case of having problems opening openal32.dll use this link ->  https://www.dropbox.com/s/2jrp6fvqzln3r5f/openal%20instalador.zip?dl=0
