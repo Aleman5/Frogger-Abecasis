@@ -8,6 +8,7 @@ Alejandro Abecasis:
 Assets used:
 	- Frog ->				  https://www.piskelapp.com/p/agxzfnBpc2tlbC1hcHByEwsSBlBpc2tlbBiAgMD_lZ3cCww/view
 	- Obstacules ->			  https://www.piskelapp.com/p/agxzfnBpc2tlbC1hcHByEwsSBlBpc2tlbBiAgMD_lfunCww/view
+	- Controls ->			  https://www.piskelapp.com/p/agxzfnBpc2tlbC1hcHByEwsSBlBpc2tlbBiAgKCAqcHLCAw/view
 
 Font used: 
 	- Arcade Classic ->		  https://www.dafont.com/arcade-classic-pizz.font
